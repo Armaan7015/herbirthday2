@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Katyayani</title>
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+        .loader {
+            opacity: 0.5;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.2; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.2; }
+        }
+    </style>
+    <script>
+        function redirect() {
+            // Check for mobile width or touch capability
+            const isMobile = window.innerWidth <= 768 || 
+                             (navigator.maxTouchPoints > 0 && window.innerWidth < 1000);
+
+            if (isMobile) {
+                window.location.replace("mobile.html");
+            } else {
+                window.location.replace("desktop.html");
+            }
+        }
+        window.onload = redirect;
+    </script>
+</head>
+<body>
+    <div class="loader">Loading...</div>
+</body>
+</html>

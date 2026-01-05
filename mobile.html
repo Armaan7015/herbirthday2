@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:ital,wght@1,400;1,600;1,900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- RESET & CORE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        /* --- SNAP SCROLL CONTAINER --- */
+        .story-container {
+            height: 100vh; /* Fallback */
+            height: 100dvh; /* Dynamic height */
+            overflow-y: auto; /* Fix: 'auto' prevents ugly scrollbars */
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        /* --- INDIVIDUAL SLIDES --- */
+        section {
+            height: 100vh;
+            height: 100dvh;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- BACKGROUNDS & OVERLAYS --- */
+        .bg-media {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: -1;
+            opacity: 0.6;
+            filter: sepia(20%) grayscale(20%) contrast(1.1);
+            transition: transform 10s ease;
+        }
+        
+        .overlay-gradient {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8));
+            z-index: 0;
+        }
+
+        section.active .bg-media { transform: scale(1.1); }
+
+        /* --- TYPOGRAPHY --- */
+        .content { position: relative; z-index: 2; max-width: 500px; opacity: 0; transform: translateY(20px); transition: all 1s ease 0.3s; }
+        section.active .content { opacity: 1; transform: translateY(0); }
+
+        h1 { font-family: 'Playfair Display', serif; font-size: 3.5rem; line-height: 1; margin-bottom: 10px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        h2 { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 20px; color: #fff; font-style: italic; }
+        p { font-size: 1.1rem; line-height: 1.6; color: #e0e0e0; margin-bottom: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: #ffc3a0; margin-bottom: 15px; display: block; }
+        .accent { color: #ffc3a0; }
+
+        /* --- EFFECTS --- */
+        .grain-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 900; opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+        }
+        #fireflies { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;}
+
+        /* --- HORIZONTAL SCROLL --- */
+        .horizontal-scroll {
+            display: flex; gap: 20px; overflow-x: auto; width: 100%; padding: 20px 0;
+            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+        }
+        .polaroid-card {
+            flex: 0 0 70%; scroll-snap-align: center; background: #f4ecd8; padding: 10px; padding-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); transform: rotate(-2deg);
+        }
+        .polaroid-card:nth-child(even) { transform: rotate(2deg); }
+        .polaroid-card img, .polaroid-card video { width: 100%; height: 300px; object-fit: cover; filter: sepia(30%); }
+
+        /* --- MUSIC BTN --- */
+        #music-btn {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: #ffc3a0; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px);
+        }
+        .scroll-hint {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.5); font-size: 0.8rem; letter-spacing: 2px;
+            animation: bounce 2s infinite; z-index: 10;
+        }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);} 40% {transform: translateX(-50%) translateY(-10px);} 60% {transform: translateX(-50%) translateY(-5px);} }
+
+        /* --- START SCREEN --- */
+        #start-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s;
+        }
+        .enter-btn {
+            margin-top: 30px; padding: 12px 40px; border: 1px solid rgba(255,255,255,0.4); 
+            background: transparent; color: #fff; border-radius: 30px; letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop></audio>
+
+    <div id="music-btn" onclick="toggleMusic()">🎵</div>
+    
+    <div class="grain-overlay"></div>
+    <canvas id="fireflies"></canvas>
+
+    <div id="start-screen">
+        <span class="label">A SMALL GIFT</span>
+        <h1 style="font-size: 2rem;">For Katyayani</h1>
+        <button class="enter-btn" onclick="enterSite()">OPEN</button>
+    </div>
+
+    <div class="story-container">
+
+        <section class="active">
+            <div class="overlay-gradient"></div>
+            <img src="photo1.jpg" class="bg-media" alt="Hero Background">
+            
+            <div class="content">
+                <span class="label">JAN 19, 2026</span>
+                <h1>Happy<br>Birth<br>Day<span class="accent">.</span></h1>
+                <p style="margin-top: 20px;">I just wanted to do something small.</p>
+            </div>
+            <div class="scroll-hint">SCROLL DOWN</div>
+        </section>
+
+        <section>
+            <div class="overlay-gradient"></div>
+            <img src="eyes.jpg" class="bg-media" alt="Eyes Background">
+            
+            <div class="content">
+                <span class="label">01 — THE EYES</span>
+                <h2>Your Eyes</h2>
+                <p>
+                    मैं ने समझा था कि तू है तो दरख़्शाँ है हयात<br>
+                    तेरा ग़म है तो ग़म-ए-दहर का झगड़ा क्या है
+                </p>
+                <p>
+                    तेरी सूरत से है आलम में बहारों को सबात<br>
+                    तेरी आँखों के सिवा दुनिया में रक्खा क्या है
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <div class="overlay-gradient" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.9));"></div>
+            
+            <video muted loop playsinline class="bg-media">
+                <source src="smile-video.mp4" type="video/mp4">
+            </video>
+            
+            <div class="content">
+                <span class="label">02 — THE SMILE</span>
+                <h2>Your Smile</h2>
+                <p>
+                    लेकिन ऐसा-ऐसा रौशन हँसता बातें करता चाँद<br>
+                    आज से पहले कब उतरा था दिल में इतना गहरा चाँद
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <div class="overlay-gradient"></div>
+            <img src="photo4.jpg" class="bg-media" alt="Message Background">
+            
+            <div class="content">
+                <span class="label">03 — TO YOU</span>
+                <h2 style="font-size: 2.5rem;">To Katyayani</h2>
+                <p>
+                    मलमल रेशम खद्दर अच्छा लगता है<br>
+                    कुछ भी पहनों तुम पर अच्छा लगता है
+                </p>
+                <p>
+                    मुझको यूं ही अच्छी लगती रहना तुम<br>
+                    अच्छा लगना तुम पर अच्छा लगता है
+                </p>
+            </div>
+        </section>
+
+        <section style="justify-content: flex-start; padding-top: 80px;">
+            <div class="overlay-gradient"></div>
+            <img src="main-photo.jpg" class="bg-media" style="filter: blur(10px) brightness(0.4);" alt="Blur BG">
+
+            <div class="content" style="width: 100%; max-width: 100%;">
+                <span class="label">MEMORIES</span>
+                <p style="margin-bottom: 30px;">"What we had was good,<br>and I’m glad it existed."</p>
+                
+                <div class="horizontal-scroll">
+                    <div style="flex: 0 0 10px;"></div> 
+
+                    <div class="polaroid-card">
+                        <img src="image1.jpg" alt="Memory 1">
+                    </div>
+                    <div class="polaroid-card">
+                        <video muted loop playsinline src="video1.mp4"></video>
+                    </div>
+                    <div class="polaroid-card">
+                        <img src="image2.jpg" alt="Memory 2">
+                    </div>
+                    <div class="polaroid-card">
+                        <video muted loop playsinline src="video2.mp4"></video>
+                    </div>
+
+                    <div style="flex: 0 0 10px;"></div>
+                </div>
+                <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 10px;">← Swipe →</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="overlay-gradient"></div>
+            <img src="photo1.jpg" class="bg-media" style="filter: grayscale(100%) brightness(0.3);" alt="Final BG">
+            
+            <div class="content">
+                <p style="color: #aaa;">
+                    I hope life is kind to you.<br>
+                    Wherever you are,<br>
+                    whatever you’re becoming...
+                </p>
+                <br>
+                <h1 style="font-size: 2.5rem;">I wish you well.</h1>
+                <div style="margin-top: 50px; font-size: 1.5rem;">🎈</div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // --- SMART PLAYLIST CONFIG ---
+        const playlist = [
+            "aur_mohabbat_kitni_karoon.mp3",
+            "rakhlo_tum_chupaake.mp3",
+            "aaja_piya_tohe_pyar_doon.mp3",
+            "abhi_na_jao_chhod_kar.mp3",
+            "yeh_zindagi_hai.mp3",
+            "zaroor.mp3",
+            "yu_na_tha.mp3",
+            "teri_ho_na_saki.mp3",
+            "dil_nu.mp3",
+            "co2.mp3",
+            "baat_itni_si_hai.mp3",
+            "dooron_dooron.mp3",
+            "paigaam.mp3",
+            "sanun_nahar_wale_pool.mp3",
+            "ham_tere_pyar_mein.mp3"
+        ];
+
+        const audioPlayer = document.getElementById('bg-music');
+        audioPlayer.volume = 0.5; // Set Volume to 50%
+
+        // --- NO-REPEAT LOGIC (using LocalStorage) ---
+        // 1. Get List of Songs She Has Already Heard
+        let playedSongs = JSON.parse(localStorage.getItem('played_songs_log') || '[]');
+
+        // 2. Filter out songs she has already heard
+        let availableSongs = playlist.filter(song => !playedSongs.includes(song));
+
+        // 3. If she has heard ALL songs, clear the memory and start over
+        if (availableSongs.length === 0) {
+            availableSongs = playlist;
+            playedSongs = []; 
+        }
+
+        // 4. Pick a Random Song from the Remaining List
+        const randomIndex = Math.floor(Math.random() * availableSongs.length);
+        const selectedSong = availableSongs[randomIndex];
+
+        // 5. Load the song
+        audioPlayer.src = selectedSong;
+        console.log("Playing:", selectedSong);
+
+        // 6. Save this song to memory so it doesn't repeat immediately
+        playedSongs.push(selectedSong);
+        localStorage.setItem('played_songs_log', JSON.stringify(playedSongs));
+
+
+        // --- INTERACTION LOGIC ---
+        function enterSite() {
+            // Fade out start screen
+            document.getElementById('start-screen').style.opacity = '0';
+            setTimeout(() => document.getElementById('start-screen').remove(), 1000);
+            
+            toggleMusic();
+
+            // Force play all background videos
+            const allVideos = document.querySelectorAll('video');
+            allVideos.forEach(vid => {
+                vid.muted = true; 
+                vid.play().catch(error => {
+                    console.log("Video autoplay failed:", error);
+                });
+            });
+        }
+
+        function toggleMusic() {
+            const musicBtn = document.getElementById('music-btn');
+            if(audioPlayer.paused) { 
+                audioPlayer.play(); 
+                musicBtn.style.opacity = '1'; 
+            } else { 
+                audioPlayer.pause(); 
+                musicBtn.style.opacity = '0.5'; 
+            }
+        }
+
+        // --- ANIMATIONS ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('section').forEach(s => observer.observe(s));
+
+        // Fireflies
+        const canvas = document.getElementById("fireflies");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let particles = [];
+        class Particle {
+            constructor() { this.reset(); }
+            reset() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.size = Math.random()*2; this.speedX = (Math.random() - 0.5)*0.5; this.speedY = (Math.random() - 0.5)*0.5; }
+            update() { this.x+=this.speedX; this.y+=this.speedY; if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height) this.reset(); }
+            draw() { ctx.fillStyle = "rgba(255,255,255,0.4)"; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
+        }
+        for(let i=0; i<40; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+        animate();
+    </script>
+</body>
+</html>
