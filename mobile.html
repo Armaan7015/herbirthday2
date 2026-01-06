@@ -22,9 +22,9 @@
 
         /* --- SNAP SCROLL CONTAINER --- */
         .story-container {
-            height: 100vh; /* Fallback */
-            height: 100dvh; /* Dynamic height */
-            overflow-y: auto; /* Fix: 'auto' prevents ugly scrollbars */
+            height: 100vh;
+            height: 100dvh;
+            overflow-y: auto;
             scroll-snap-type: y mandatory;
             scroll-behavior: smooth;
         }
@@ -46,7 +46,7 @@
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* --- BACKGROUNDS & OVERLAYS --- */
+        /* --- BACKGROUNDS --- */
         .bg-media {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: -1;
@@ -54,13 +54,11 @@
             filter: sepia(20%) grayscale(20%) contrast(1.1);
             transition: transform 10s ease;
         }
-        
         .overlay-gradient {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8));
             z-index: 0;
         }
-
         section.active .bg-media { transform: scale(1.1); }
 
         /* --- TYPOGRAPHY --- */
@@ -73,15 +71,46 @@
         .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: #ffc3a0; margin-bottom: 15px; display: block; }
         .accent { color: #ffc3a0; }
 
-        /* --- EFFECTS --- */
+        /* --- PLAYLIST & MUSIC UI --- */
+        #music-btn {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: #ffc3a0; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px);
+            cursor: pointer; transition: all 0.3s;
+        }
+        
+        #playlist-btn {
+            position: fixed; top: 70px; right: 20px; z-index: 1000;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px);
+            font-size: 1.2rem; cursor: pointer; transition: all 0.3s;
+        }
+
+        #playlist-modal {
+            display: none; position: fixed; top: 120px; right: 20px; width: 220px; max-height: 400px;
+            background: rgba(0,0,0,0.85); border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px); border-radius: 12px; padding: 10px;
+            overflow-y: auto; z-index: 1001; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .song-item {
+            display: block; width: 100%; padding: 12px; margin-bottom: 5px;
+            background: rgba(255,255,255,0.05); border: none; border-radius: 6px;
+            color: #ccc; text-align: left; font-size: 0.75rem; cursor: pointer;
+            transition: background 0.2s; font-family: 'Inter', sans-serif;
+            text-transform: capitalize;
+        }
+        .song-item:hover { background: rgba(255, 195, 160, 0.2); color: #fff; }
+
+        /* --- OTHER ELEMENTS --- */
         .grain-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 900; opacity: 0.05;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
         }
         #fireflies { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;}
-
-        /* --- HORIZONTAL SCROLL --- */
         .horizontal-scroll {
             display: flex; gap: 20px; overflow-x: auto; width: 100%; padding: 20px 0;
             scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
@@ -92,14 +121,6 @@
         }
         .polaroid-card:nth-child(even) { transform: rotate(2deg); }
         .polaroid-card img, .polaroid-card video { width: 100%; height: 300px; object-fit: cover; filter: sepia(30%); }
-
-        /* --- MUSIC BTN --- */
-        #music-btn {
-            position: fixed; top: 20px; right: 20px; z-index: 1000;
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            color: #ffc3a0; width: 40px; height: 40px; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px);
-        }
         .scroll-hint {
             position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
             color: rgba(255,255,255,0.5); font-size: 0.8rem; letter-spacing: 2px;
@@ -107,7 +128,6 @@
         }
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);} 40% {transform: translateX(-50%) translateY(-10px);} 60% {transform: translateX(-50%) translateY(-5px);} }
 
-        /* --- START SCREEN --- */
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s;
@@ -123,7 +143,11 @@
     <audio id="bg-music" loop></audio>
 
     <div id="music-btn" onclick="toggleMusic()">🎵</div>
+    <div id="playlist-btn" onclick="togglePlaylist()">📜</div>
     
+    <div id="playlist-modal">
+        </div>
+
     <div class="grain-overlay"></div>
     <canvas id="fireflies"></canvas>
 
@@ -249,69 +273,81 @@
     </div>
 
     <script>
-        // --- SMART PLAYLIST CONFIG ---
+        // --- 5 OLD, 5 NEW, 5 LOVE ---
         const playlist = [
-            "aur_mohabbat_kitni_karoon.mp3",
-            "rakhlo_tum_chupaake.mp3",
-            "aaja_piya_tohe_pyar_doon.mp3",
             "abhi_na_jao_chhod_kar.mp3",
-            "yeh_zindagi_hai.mp3",
-            "zaroor.mp3",
-            "yu_na_tha.mp3",
-            "teri_ho_na_saki.mp3",
-            "dil_nu.mp3",
-            "co2.mp3",
-            "baat_itni_si_hai.mp3",
-            "dooron_dooron.mp3",
-            "paigaam.mp3",
+            "aaja_piya_tohe_pyar_doon.mp3",
             "sanun_nahar_wale_pool.mp3",
-            "ham_tere_pyar_mein.mp3"
+            "ham_tere_pyar_mein.mp3",
+            "lag_ja_gale.mp3", 
+            "dil_nu.mp3",
+            "yeh_zindagi_hai.mp3",
+            "rakhlo_tum_chupaake.mp3",
+            "co2.mp3",
+            "paigaam.mp3",
+            "aur_mohabbat_kitni_karoon.mp3",
+            "zaroor.mp3",
+            "teri_ho_na_saki.mp3",
+            "baat_itni_si_hai.mp3",
+            "dooron_dooron.mp3"
         ];
 
         const audioPlayer = document.getElementById('bg-music');
-        audioPlayer.volume = 0.5; // Set Volume to 50%
+        audioPlayer.volume = 0.5;
 
-        // --- NO-REPEAT LOGIC (using LocalStorage) ---
-        // 1. Get List of Songs She Has Already Heard
-        let playedSongs = JSON.parse(localStorage.getItem('played_songs_log') || '[]');
-
-        // 2. Filter out songs she has already heard
-        let availableSongs = playlist.filter(song => !playedSongs.includes(song));
-
-        // 3. If she has heard ALL songs, clear the memory and start over
-        if (availableSongs.length === 0) {
-            availableSongs = playlist;
-            playedSongs = []; 
+        // --- PLAYLIST UI LOGIC ---
+        function togglePlaylist() {
+            const modal = document.getElementById('playlist-modal');
+            if (modal.style.display === 'block') {
+                modal.style.display = 'none';
+            } else {
+                modal.style.display = 'block';
+                // Generate list if empty
+                if(modal.innerHTML.trim() === "") {
+                    playlist.forEach(song => {
+                        const btn = document.createElement('button');
+                        btn.className = 'song-item';
+                        // Clean name: "my_song.mp3" -> "My Song"
+                        let cleanName = song.replace('.mp3', '').replace(/_/g, ' ');
+                        btn.innerText = cleanName;
+                        btn.onclick = () => playSpecificSong(song);
+                        modal.appendChild(btn);
+                    });
+                }
+            }
         }
 
-        // 4. Pick a Random Song from the Remaining List
+        function playSpecificSong(songName) {
+            audioPlayer.src = songName;
+            audioPlayer.play();
+            document.getElementById('music-btn').style.opacity = '1';
+            // Close modal after selection
+            document.getElementById('playlist-modal').style.display = 'none';
+        }
+
+        // --- RANDOM STARTUP LOGIC ---
+        let playedSongs = JSON.parse(localStorage.getItem('played_songs_log') || '[]');
+        let availableSongs = playlist.filter(song => !playedSongs.includes(song));
+        if (availableSongs.length === 0) { availableSongs = playlist; playedSongs = []; }
+        
         const randomIndex = Math.floor(Math.random() * availableSongs.length);
         const selectedSong = availableSongs[randomIndex];
-
-        // 5. Load the song
-        audioPlayer.src = selectedSong;
-        console.log("Playing:", selectedSong);
-
-        // 6. Save this song to memory so it doesn't repeat immediately
+        
+        audioPlayer.src = selectedSong; 
         playedSongs.push(selectedSong);
         localStorage.setItem('played_songs_log', JSON.stringify(playedSongs));
 
 
-        // --- INTERACTION LOGIC ---
+        // --- SITE INTERACTION ---
         function enterSite() {
-            // Fade out start screen
             document.getElementById('start-screen').style.opacity = '0';
             setTimeout(() => document.getElementById('start-screen').remove(), 1000);
-            
             toggleMusic();
 
-            // Force play all background videos
             const allVideos = document.querySelectorAll('video');
             allVideos.forEach(vid => {
                 vid.muted = true; 
-                vid.play().catch(error => {
-                    console.log("Video autoplay failed:", error);
-                });
+                vid.play().catch(error => console.log("Autoplay failed", error));
             });
         }
 
@@ -329,9 +365,7 @@
         // --- ANIMATIONS ---
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
+                if (entry.isIntersecting) entry.target.classList.add('active');
             });
         }, { threshold: 0.5 });
         document.querySelectorAll('section').forEach(s => observer.observe(s));
