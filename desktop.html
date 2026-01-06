@@ -49,7 +49,7 @@
             filter: sepia(20%) grayscale(20%) contrast(1.1); transition: all 0.5s ease;
         }
 
-        /* --- MUSIC & PLAYLIST UI --- */
+        /* --- MUSIC BUTTON --- */
         #music-btn {
             position: fixed; bottom: 20px; right: 20px; z-index: 1000;
             background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3);
@@ -59,29 +59,6 @@
         }
         #music-btn:hover { background-color: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
         #music-btn.playing { animation: pulse 2s infinite; }
-        
-        #playlist-btn {
-            position: fixed; bottom: 80px; right: 20px; z-index: 1000;
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            color: #fff; width: 40px; height: 40px; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px);
-            font-size: 1.2rem; cursor: pointer; transition: all 0.3s;
-        }
-
-        #playlist-modal {
-            display: none; position: fixed; bottom: 140px; right: 20px; width: 250px; max-height: 300px;
-            background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px); border-radius: 15px; padding: 15px;
-            overflow-y: auto; z-index: 1001; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .song-item {
-            display: block; width: 100%; padding: 10px; margin-bottom: 5px;
-            background: rgba(255,255,255,0.05); border: none; border-radius: 8px;
-            color: #ccc; text-align: left; font-size: 0.8rem; cursor: pointer;
-            transition: background 0.2s; font-family: 'Inter', sans-serif; text-transform: capitalize;
-        }
-        .song-item:hover { background: rgba(255, 195, 160, 0.2); color: #fff; }
-
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(255, 195, 160, 0.4); }
             70% { box-shadow: 0 0 0 10px rgba(255, 195, 160, 0); }
@@ -164,10 +141,6 @@
     <audio id="bg-music" loop></audio>
     
     <button id="music-btn">🎵</button>
-    <button id="playlist-btn" onclick="togglePlaylist()">📜</button>
-
-    <div id="playlist-modal">
-        </div>
 
     <div class="grain-overlay"></div>
     <canvas id="fireflies"></canvas>
@@ -178,6 +151,7 @@
     </div>
 
     <div class="container">
+
         <div class="hero-section">
             <img src="photo1.jpg" class="hero-pic-left" alt="Big Left Memory">
             <div class="hero-title-center">
@@ -297,66 +271,49 @@
     </div>
 
     <script>
-        // --- 5 OLD, 5 NEW, 5 LOVE ---
+        // --- SMART PLAYLIST CONFIG ---
         const playlist = [
-            "abhi_na_jao_chhod_kar.mp3",
-            "aaja_piya_tohe_pyar_doon.mp3",
-            "sanun_nahar_wale_pool.mp3",
-            "ham_tere_pyar_mein.mp3",
-            "lag_ja_gale.mp3", 
-            "dil_nu.mp3",
-            "yeh_zindagi_hai.mp3",
-            "rakhlo_tum_chupaake.mp3",
-            "co2.mp3",
-            "paigaam.mp3",
             "aur_mohabbat_kitni_karoon.mp3",
+            "rakhlo_tum_chupaake.mp3",
+            "aaja_piya_tohe_pyar_doon.mp3",
+            "abhi_na_jao_chhod_kar.mp3",
+            "yeh_zindagi_hai.mp3",
             "zaroor.mp3",
+            "yu_na_tha.mp3",
             "teri_ho_na_saki.mp3",
+            "dil_nu.mp3",
+            "co2.mp3",
             "baat_itni_si_hai.mp3",
-            "dooron_dooron.mp3"
+            "dooron_dooron.mp3",
+            "paigaam.mp3",
+            "sanun_nahar_wale_pool.mp3",
+            "ham_tere_pyar_mein.mp3"
         ];
 
         const audioPlayer = document.getElementById('bg-music');
         const musicBtn = document.getElementById('music-btn');
-        audioPlayer.volume = 0.5;
+        audioPlayer.volume = 0.5; // Set Volume to 50%
 
-        // --- PLAYLIST UI ---
-        function togglePlaylist() {
-            const modal = document.getElementById('playlist-modal');
-            if (modal.style.display === 'block') {
-                modal.style.display = 'none';
-            } else {
-                modal.style.display = 'block';
-                // Generate List if empty
-                if(modal.innerHTML.trim() === "") {
-                    playlist.forEach(song => {
-                        const btn = document.createElement('button');
-                        btn.className = 'song-item';
-                        let cleanName = song.replace('.mp3', '').replace(/_/g, ' ');
-                        btn.innerText = cleanName;
-                        btn.onclick = () => playSpecificSong(song);
-                        modal.appendChild(btn);
-                    });
-                }
-            }
-        }
-
-        function playSpecificSong(songName) {
-            audioPlayer.src = songName;
-            audioPlayer.play();
-            musicBtn.innerHTML = '❚❚';
-            musicBtn.classList.add('playing');
-            document.getElementById('playlist-modal').style.display = 'none';
-        }
-
-        // --- RANDOM START ---
+        // --- NO-REPEAT LOGIC (using LocalStorage) ---
+        // 1. Get memory
         let playedSongs = JSON.parse(localStorage.getItem('played_songs_log') || '[]');
+
+        // 2. Filter available
         let availableSongs = playlist.filter(song => !playedSongs.includes(song));
-        if (availableSongs.length === 0) { availableSongs = playlist; playedSongs = []; }
-        
+
+        // 3. Reset if empty
+        if (availableSongs.length === 0) {
+            availableSongs = playlist;
+            playedSongs = []; 
+        }
+
+        // 4. Pick random unique song
         const randomIndex = Math.floor(Math.random() * availableSongs.length);
         const selectedSong = availableSongs[randomIndex];
+
+        // 5. Set song and save to memory
         audioPlayer.src = selectedSong;
+        console.log("Playing:", selectedSong);
         playedSongs.push(selectedSong);
         localStorage.setItem('played_songs_log', JSON.stringify(playedSongs));
 
@@ -395,6 +352,7 @@
             observer.observe(section);
         });
 
+        // Fireflies
         const canvas = document.getElementById("fireflies");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
