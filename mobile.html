@@ -22,9 +22,9 @@
 
         /* --- SNAP SCROLL CONTAINER --- */
         .story-container {
-            height: 100vh; /* Fallback */
-            height: 100dvh; /* Dynamic height */
-            overflow-y: auto; /* Fix: 'auto' prevents ugly scrollbars */
+            height: 100vh;
+            height: 100dvh;
+            overflow-y: auto;
             scroll-snap-type: y mandatory;
             scroll-behavior: smooth;
         }
@@ -46,7 +46,7 @@
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* --- BACKGROUNDS & OVERLAYS --- */
+        /* --- BACKGROUNDS --- */
         .bg-media {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: -1;
@@ -54,13 +54,11 @@
             filter: sepia(20%) grayscale(20%) contrast(1.1);
             transition: transform 10s ease;
         }
-        
         .overlay-gradient {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8));
             z-index: 0;
         }
-
         section.active .bg-media { transform: scale(1.1); }
 
         /* --- TYPOGRAPHY --- */
@@ -73,6 +71,15 @@
         .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: #ffc3a0; margin-bottom: 15px; display: block; }
         .accent { color: #ffc3a0; }
 
+        /* --- MUSIC BTN --- */
+        #music-btn {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: #ffc3a0; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px);
+            cursor: pointer; opacity: 0.5; transition: opacity 0.3s;
+        }
+
         /* --- EFFECTS --- */
         .grain-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -81,7 +88,6 @@
         }
         #fireflies { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;}
 
-        /* --- HORIZONTAL SCROLL --- */
         .horizontal-scroll {
             display: flex; gap: 20px; overflow-x: auto; width: 100%; padding: 20px 0;
             scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
@@ -92,14 +98,7 @@
         }
         .polaroid-card:nth-child(even) { transform: rotate(2deg); }
         .polaroid-card img, .polaroid-card video { width: 100%; height: 300px; object-fit: cover; filter: sepia(30%); }
-
-        /* --- MUSIC BTN --- */
-        #music-btn {
-            position: fixed; top: 20px; right: 20px; z-index: 1000;
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            color: #ffc3a0; width: 40px; height: 40px; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px);
-        }
+        
         .scroll-hint {
             position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
             color: rgba(255,255,255,0.5); font-size: 0.8rem; letter-spacing: 2px;
@@ -107,7 +106,6 @@
         }
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);} 40% {transform: translateX(-50%) translateY(-10px);} 60% {transform: translateX(-50%) translateY(-5px);} }
 
-        /* --- START SCREEN --- */
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s;
@@ -121,7 +119,6 @@
 <body>
 
     <audio id="bg-music" loop></audio>
-
     <div id="music-btn" onclick="toggleMusic()">🎵</div>
     
     <div class="grain-overlay"></div>
@@ -206,7 +203,10 @@
 
             <div class="content" style="width: 100%; max-width: 100%;">
                 <span class="label">MEMORIES</span>
-                <p style="margin-bottom: 30px;">"What we had was good,<br>and I’m glad it existed."</p>
+                
+                <p style="margin-bottom: 30px;">
+                    "What we had was good,<br>and I’m glad it existed."
+                </p>
                 
                 <div class="horizontal-scroll">
                     <div style="flex: 0 0 10px;"></div> 
@@ -249,69 +249,66 @@
     </div>
 
     <script>
-        // --- SMART PLAYLIST CONFIG ---
+        // --- MASTER PLAYLIST (26 SONGS) ---
         const playlist = [
-            "aur_mohabbat_kitni_karoon.mp3",
-            "rakhlo_tum_chupaake.mp3",
-            "aaja_piya_tohe_pyar_doon.mp3",
+            // --- CLASSICS & NOSTALGIA ---
             "abhi_na_jao_chhod_kar.mp3",
-            "yeh_zindagi_hai.mp3",
-            "zaroor.mp3",
-            "yu_na_tha.mp3",
-            "teri_ho_na_saki.mp3",
+            "aaja_piya_tohe_pyar_doon.mp3",
+            "sanun_nahar_wale_pool.mp3",
+            "ham_tere_pyar_mein.mp3",
+            "lag_ja_gale.mp3",
+            "hona_tha_pyar.mp3", 
+            "ajj_din_chadheya.mp3",
+            "gehra_hua.mp3", 
+
+            // --- MODERN VIBE & INDIE ---
             "dil_nu.mp3",
+            "yeh_zindagi_hai.mp3",
+            "rakhlo_tum_chupaake.mp3",
             "co2.mp3",
+            "paigaam.mp3",
+            "dekha_hi_nahi.mp3",
+            "sang_rahiyo.mp3",
+            "ajnabee.mp3",
+
+            // --- DEEP LOVE & HEARTBREAK ---
+            "aur_mohabbat_kitni_karoon.mp3",
+            "zaroor.mp3",
+            "teri_ho_na_saki.mp3",
             "baat_itni_si_hai.mp3",
             "dooron_dooron.mp3",
-            "paigaam.mp3",
-            "sanun_nahar_wale_pool.mp3",
-            "ham_tere_pyar_mein.mp3"
+            "tum_ho.mp3",
+            "mausam.mp3",
+            "bulleya.mp3",
+            "dil_hi_toh_hai.mp3",
+            "sajni.mp3"
         ];
 
         const audioPlayer = document.getElementById('bg-music');
-        audioPlayer.volume = 0.5; // Set Volume to 50%
+        audioPlayer.volume = 0.5;
 
-        // --- NO-REPEAT LOGIC (using LocalStorage) ---
-        // 1. Get List of Songs She Has Already Heard
+        // --- RANDOM SONG LOGIC ---
         let playedSongs = JSON.parse(localStorage.getItem('played_songs_log') || '[]');
-
-        // 2. Filter out songs she has already heard
         let availableSongs = playlist.filter(song => !playedSongs.includes(song));
-
-        // 3. If she has heard ALL songs, clear the memory and start over
-        if (availableSongs.length === 0) {
-            availableSongs = playlist;
-            playedSongs = []; 
-        }
-
-        // 4. Pick a Random Song from the Remaining List
+        if (availableSongs.length === 0) { availableSongs = playlist; playedSongs = []; }
+        
         const randomIndex = Math.floor(Math.random() * availableSongs.length);
         const selectedSong = availableSongs[randomIndex];
-
-        // 5. Load the song
         audioPlayer.src = selectedSong;
-        console.log("Playing:", selectedSong);
-
-        // 6. Save this song to memory so it doesn't repeat immediately
+        
         playedSongs.push(selectedSong);
         localStorage.setItem('played_songs_log', JSON.stringify(playedSongs));
 
-
         // --- INTERACTION LOGIC ---
         function enterSite() {
-            // Fade out start screen
             document.getElementById('start-screen').style.opacity = '0';
             setTimeout(() => document.getElementById('start-screen').remove(), 1000);
-            
             toggleMusic();
 
-            // Force play all background videos
             const allVideos = document.querySelectorAll('video');
             allVideos.forEach(vid => {
                 vid.muted = true; 
-                vid.play().catch(error => {
-                    console.log("Video autoplay failed:", error);
-                });
+                vid.play().catch(e => console.log("Autoplay blocked"));
             });
         }
 
@@ -326,12 +323,9 @@
             }
         }
 
-        // --- ANIMATIONS ---
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
+                if (entry.isIntersecting) entry.target.classList.add('active');
             });
         }, { threshold: 0.5 });
         document.querySelectorAll('section').forEach(s => observer.observe(s));

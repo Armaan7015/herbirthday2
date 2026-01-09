@@ -139,7 +139,6 @@
 <body>
 
     <audio id="bg-music" loop></audio>
-    
     <button id="music-btn">🎵</button>
 
     <div class="grain-overlay"></div>
@@ -151,7 +150,6 @@
     </div>
 
     <div class="container">
-
         <div class="hero-section">
             <img src="photo1.jpg" class="hero-pic-left" alt="Big Left Memory">
             <div class="hero-title-center">
@@ -271,8 +269,7 @@
     </div>
 
     <script>
-        // --- SMART PLAYLIST CONFIG ---
-      // --- MASTER PLAYLIST (25 SONGS) ---
+        // --- MASTER PLAYLIST (26 SONGS) ---
         const playlist = [
             // --- CLASSICS & NOSTALGIA ---
             "abhi_na_jao_chhod_kar.mp3",
@@ -282,6 +279,7 @@
             "lag_ja_gale.mp3",
             "hona_tha_pyar.mp3", 
             "ajj_din_chadheya.mp3",
+            "gehra_hua.mp3", 
 
             // --- MODERN VIBE & INDIE ---
             "dil_nu.mp3",
@@ -304,38 +302,25 @@
             "bulleya.mp3",
             "dil_hi_toh_hai.mp3",
             "sajni.mp3"
-            "gehra_hua.mp3",
         ];
 
         const audioPlayer = document.getElementById('bg-music');
         const musicBtn = document.getElementById('music-btn');
-        audioPlayer.volume = 0.5; // Set Volume to 50%
+        audioPlayer.volume = 0.5;
 
-        // --- NO-REPEAT LOGIC (using LocalStorage) ---
-        // 1. Get memory
+        // --- RANDOM SONG ---
         let playedSongs = JSON.parse(localStorage.getItem('played_songs_log') || '[]');
-
-        // 2. Filter available
         let availableSongs = playlist.filter(song => !playedSongs.includes(song));
-
-        // 3. Reset if empty
-        if (availableSongs.length === 0) {
-            availableSongs = playlist;
-            playedSongs = []; 
-        }
-
-        // 4. Pick random unique song
+        if (availableSongs.length === 0) { availableSongs = playlist; playedSongs = []; }
+        
         const randomIndex = Math.floor(Math.random() * availableSongs.length);
         const selectedSong = availableSongs[randomIndex];
-
-        // 5. Set song and save to memory
         audioPlayer.src = selectedSong;
-        console.log("Playing:", selectedSong);
+        
         playedSongs.push(selectedSong);
         localStorage.setItem('played_songs_log', JSON.stringify(playedSongs));
 
-
-        // --- SITE LOGIC ---
+        // --- UI LOGIC ---
         function enterSite() {
             const screen = document.getElementById('start-screen');
             screen.style.opacity = '0';
@@ -401,5 +386,4 @@
     </script>
 
 </body>
-
 </html>
