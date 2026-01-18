@@ -49,6 +49,15 @@
             filter: sepia(20%) grayscale(20%) contrast(1.1); transition: all 0.5s ease;
         }
 
+        /* --- ROSE EFFECT --- */
+        .rose-symbol {
+            font-size: 4rem; margin-top: 50px; opacity: 0.8;
+            filter: grayscale(40%) drop-shadow(0 0 15px rgba(255,0,0,0.3));
+            animation: floatRose 3s ease-in-out infinite;
+        }
+        @keyframes floatRose { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+
         /* --- MUSIC BUTTON --- */
         #music-btn {
             position: fixed; bottom: 20px; right: 20px; z-index: 1000;
@@ -260,11 +269,21 @@
         </div>
 
         <div style="text-align: center; margin-top: 150px; padding-bottom: 80px;">
+            
+            <div style="margin-bottom: 60px;">
+                <p style="font-size: 1.4rem; color: #ffc3a0; margin-bottom: 20px; font-family: 'Playfair Display', serif; font-style: italic;">
+                    अब तुमसा जहां मैं कोई नहीं है<br>
+                    हम तो तुम्हारे हो बैठे
+                </p>
+            </div>
+
             <p style="font-size: 1.1rem; color: #aaa; margin-bottom: 20px;">
                 I hope life is kind to you.<br>
                 Wherever you are, whatever you’re becoming,
             </p>
             <h1 style="font-size: 3rem;">I wish you well. <span class="accent"></span></h1>
+            
+            <div class="rose-symbol">🌹</div>
         </div>
 
     </div>
@@ -272,37 +291,12 @@
     <script>
         // --- MASTER PLAYLIST (26 SONGS) ---
         const playlist = [
-            // --- CLASSICS & NOSTALGIA ---
-            "abhi_na_jao_chhod_kar.mp3",
-            "aaja_piya_tohe_pyar_doon.mp3",
-            "sanun_nahar_wale_pool.mp3",
-            "ham_tere_pyar_mein.mp3",
-            "lag_ja_gale.mp3",
-            "hona_tha_pyar.mp3", 
-            "ajj_din_chadheya.mp3",
-            "gehra_hua.mp3", 
-
-            // --- MODERN VIBE & INDIE ---
-            "dil_nu.mp3",
-            "yeh_zindagi_hai.mp3",
-            "rakhlo_tum_chupaake.mp3",
-            "co2.mp3",
-            "paigaam.mp3",
-            "dekha_hi_nahi.mp3",
-            "sang_rahiyo.mp3",
-            "ajnabee.mp3",
-
-            // --- DEEP LOVE & HEARTBREAK ---
-            "aur_mohabbat_kitni_karoon.mp3",
-            "zaroor.mp3",
-            "teri_ho_na_saki.mp3",
-            "baat_itni_si_hai.mp3",
-            "dooron_dooron.mp3",
-            "tum_ho.mp3",
-            "mausam.mp3",
-            "bulleya.mp3",
-            "dil_hi_toh_hai.mp3",
-            "sajni.mp3"
+            "abhi_na_jao_chhod_kar.mp3", "aaja_piya_tohe_pyar_doon.mp3", "sanun_nahar_wale_pool.mp3",
+            "ham_tere_pyar_mein.mp3", "lag_ja_gale.mp3", "hona_tha_pyar.mp3", "ajj_din_chadheya.mp3",
+            "gehra_hua.mp3", "dil_nu.mp3", "yeh_zindagi_hai.mp3", "rakhlo_tum_chupaake.mp3",
+            "co2.mp3", "paigaam.mp3", "dekha_hi_nahi.mp3", "sang_rahiyo.mp3", "ajnabee.mp3",
+            "aur_mohabbat_kitni_karoon.mp3", "zaroor.mp3", "teri_ho_na_saki.mp3", "baat_itni_si_hai.mp3",
+            "dooron_dooron.mp3", "tum_ho.mp3", "mausam.mp3", "bulleya.mp3", "dil_hi_toh_hai.mp3", "sajni.mp3"
         ];
 
         const audioPlayer = document.getElementById('bg-music');
@@ -355,7 +349,7 @@
             observer.observe(section);
         });
 
-        // Fireflies
+        // --- FIREFLIES ---
         const canvas = document.getElementById("fireflies");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -387,5 +381,4 @@
     </script>
 
 </body>
-
 </html>
